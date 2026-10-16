@@ -3,3 +3,4 @@ src/
 # Bản build tạo lại bằng tools/build.py
 dist/
 .DS_Store
+*.zip
