@@ -1,0 +1,5 @@
+# File gốc Tripo/Mixamo (FBX, ~80MB) chỉ dùng để chuyển đổi, không cần cho trang web
+src/
+# Bản build tạo lại bằng tools/build.py
+dist/
+.DS_Store
