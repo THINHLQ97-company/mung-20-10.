@@ -344,8 +344,73 @@ body.in-game .music{top:calc(64px + env(safe-area-inset-top,0px))}
 .cast{padding-bottom:0!important}
 .actor{bottom:16%!important}
 
+
+/* ---------- MÀN HÌNH CHÀO: hộp quà, mở ra như kéo hai vạt giấy gói ---------- */
+.intro{position:fixed;inset:0;z-index:300;display:grid;place-items:center;text-align:center;overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.intro-bg{position:absolute;inset:-20px;background:url("assets/hero_room.webp") center/cover no-repeat;filter:blur(14px) saturate(1.1);transform:scale(1.08);transition:opacity .9s .5s}
+.curtain{position:absolute;top:0;bottom:0;width:50.5%;transition:transform 1.15s cubic-bezier(.7,0,.2,1) .25s;
+  background:radial-gradient(circle at 20px 20px,#ffffff55 0 3px,transparent 4px) 0 0/40px 40px,linear-gradient(160deg,#ffd6e1ee,#ffb3c8ee 60%,#ff9fbcee)}
+.curtain.l{left:0;box-shadow:inset -18px 0 0 #ff6f9c,inset -24px 0 0 #fff8}
+.curtain.r{right:0;box-shadow:inset 18px 0 0 #ff6f9c,inset 24px 0 0 #fff8}
+.intro-bow{position:absolute;left:50%;top:max(14px,4vh);width:120px;transform:translateX(-50%);z-index:2;filter:drop-shadow(0 6px 10px #a8476a40);transition:transform .7s cubic-bezier(.5,-.4,.6,1),opacity .5s}
+.intro .petals{z-index:2}
+.intro-in{position:relative;z-index:3;display:grid;justify-items:center;gap:14px;max-width:460px;transition:opacity .45s,transform .6s cubic-bezier(.5,0,.3,1)}
+.intro-pic{width:clamp(150px,30vw,210px);aspect-ratio:1;border-radius:36%;background:#fff;border:5px solid #fff;box-shadow:0 8px 0 #f4a3bd,0 20px 40px #a8476a40;overflow:hidden;animation:bob 4s ease-in-out infinite}
+.intro-pic img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;transform:scale(1.15) translateY(6%)}
+.intro h2{margin:6px 0 0;font-family:var(--display);font-weight:400;font-size:clamp(22px,4vw,32px);color:#c2185b;text-shadow:0 2px 0 #fff}
+.intro-bar{position:relative;width:min(300px,72vw);height:12px;border-radius:99px;background:#fff;border:2px solid #c2185b;margin-top:6px}
+.intro-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#ff8fb0,var(--tangerine))}
+.intro-knob{position:absolute;top:50%;left:0;width:34px;height:34px;margin:-17px 0 0 -17px;filter:drop-shadow(0 3px 4px #a8476a55)}
+.intro-pct{margin:0;font-family:var(--display);color:#c2185b;font-size:15px;font-variant-numeric:tabular-nums}
+.intro-note{margin:4px 0 0;display:flex;align-items:center;gap:12px;text-align:left;background:#fff;color:var(--ink);font-weight:600;font-size:15px;line-height:1.45;
+  padding:12px 16px;border-radius:18px;box-shadow:0 4px 0 #f4a3bd,0 12px 24px #a8476a26}
+.intro-note svg{flex:none;color:var(--tangerine);animation:bob 2.4s ease-in-out infinite}
+.intro-go{font-size:18px;padding:14px 30px;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.06)}}
+.intro.opening .intro-in{opacity:0;transform:scale(.85) translateY(20px)}
+.intro.opening .intro-bow{transform:translateX(-50%) translateY(-160%) rotate(-20deg);opacity:0}
+.intro.opening .curtain.l{transform:translateX(-102%)}
+.intro.opening .curtain.r{transform:translateX(102%)}
+.intro.opening .intro-bg,.intro.opening .petals{opacity:0}
+.intro .petals{transition:opacity .6s}
+body.intro-open{overflow:hidden}
+body.intro-open .music{visibility:hidden}
+/* hiệu ứng mở màn trang chủ */
+body.revealing .scene.room .room-bg{animation:roomIn 1.8s cubic-bezier(.2,.7,.2,1) both}
+body.revealing .scene.room .title .w span{animation:dropIn .9s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(.5s + var(--d,0s))}
+body.revealing .group{animation:groupIn 1.1s cubic-bezier(.3,1.4,.5,1) .7s both}
+body.revealing .ava,body.revealing .sig,body.revealing .floater > div{animation:popIn .6s cubic-bezier(.3,1.8,.5,1) both;animation-delay:1.2s}
+@keyframes roomIn{from{transform:scale(1.25);filter:blur(8px)}}
+@keyframes dropIn{from{transform:translateY(-120%) rotate(var(--r,0deg));opacity:0}}
+@keyframes groupIn{from{transform:translateX(-50%) translateY(30%) scale(.8);opacity:0}}
+@keyframes popIn{from{transform:scale(0);opacity:0}}
+
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}html{scroll-behavior:auto}}
 </style>
+
+
+<!-- ============ MÀN HÌNH CHÀO ============ -->
+<div class="intro" id="intro" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+  <div class="intro-bg" aria-hidden="true"></div>
+  <div class="curtain l" aria-hidden="true"></div><div class="curtain r" aria-hidden="true"></div>
+  <svg class="intro-bow" viewBox="0 0 120 70" aria-hidden="true"><path d="M60 35C40 5 8 6 10 30c2 20 32 14 50 5z" fill="#ff4f86"/><path d="M60 35C80 5 112 6 110 30c-2 20-32 14-50 5z" fill="#ff4f86"/>
+    <path d="M60 35C46 18 24 18 24 30c0 9 20 8 36 5zM60 35c14-17 36-17 36-5 0 9-20 8-36 5z" fill="#ff8fb0"/><path d="M54 38l-12 30 10-4 6 6 2-32zM66 38l12 30-10-4-6 6-2-32z" fill="#e0336e"/><circle cx="60" cy="35" r="9" fill="#e0336e"/></svg>
+  <canvas class="petals" id="introPetals" aria-hidden="true"></canvas>
+  <div class="intro-in">
+    <div class="intro-pic"><img src="assets/hero_group.webp" alt=""></div>
+    <h2 id="introTitle">Đang gói quà cho bạn…</h2>
+    <div class="intro-bar" aria-hidden="true"><i id="introBar"></i><svg class="spin-flower intro-knob" id="introKnob" viewBox="0 0 100 100"><g fill="#ff6f9c">
+      <ellipse cx="50" cy="24" rx="15" ry="22"/><ellipse cx="50" cy="24" rx="15" ry="22" transform="rotate(60 50 50)"/><ellipse cx="50" cy="24" rx="15" ry="22" transform="rotate(120 50 50)"/>
+      <ellipse cx="50" cy="24" rx="15" ry="22" transform="rotate(180 50 50)"/><ellipse cx="50" cy="24" rx="15" ry="22" transform="rotate(240 50 50)"/><ellipse cx="50" cy="24" rx="15" ry="22" transform="rotate(300 50 50)"/></g>
+      <circle cx="50" cy="50" r="14" fill="#ffd23f"/></svg></div>
+    <p class="intro-pct" id="introPct" aria-live="polite">0%</p>
+    <p class="intro-note"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="3" y="13" width="5" height="7" rx="2" fill="currentColor"/><rect x="16" y="13" width="5" height="7" rx="2" fill="currentColor"/></svg>
+      <span>Hãy đeo tai nghe / mở loa để món quà này được dành tặng trọn vẹn nhất.</span></p>
+    <button class="btn hot intro-go" id="introGo" type="button" hidden>Mở quà
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 3l5 5-5 5" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+</div>
 
 <!-- ============ HERO ============ -->
 <header class="scene room" id="top">
@@ -364,7 +429,7 @@ body.in-game .music{top:calc(64px + env(safe-area-inset-top,0px))}
   <button class="giftbox" id="giftbox" aria-label="Mở hộp quà"></button>
   <div id="floaters"></div>
   <canvas class="petals" id="petalsFront" aria-hidden="true"></canvas>
-  <a class="cue" href="#gate">Vào cổng nhận quà
+  <a class="cue" href="#gate">Tới khu rừng hoa
     <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1v11M2 7l5 5 5-5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 </header>
 
@@ -666,6 +731,32 @@ petalLayer($('#petalsFront'), 10, 11, .9);
 
 
 $('#heroAvatars').innerHTML = MEMBERS.map(m => `<div class="ava a-${m.id}"><img src="${m.avatar}" alt="Ảnh của ${m.name}"><span>${m.short}</span></div>`).join('');
+
+
+/* ================== MÀN HÌNH CHÀO ==================
+   Hiện 6–10 giây trong lúc tải ảnh, nhạc; nút "Mở quà" cũng là thao tác đầu tiên để trình duyệt cho phát nhạc */
+(function intro(){
+  const el = $('#intro'), bar = $('#introBar'), knob = $('#introKnob'), pct = $('#introPct'), go = $('#introGo'), t0 = performance.now(), MIN = 6000, MAX = 10000;
+  document.body.classList.add('intro-open');
+  petalLayer($('#introPetals'), 22, 9, .95);
+  const waits = [...document.querySelectorAll('#heroGroup img, .intro-pic img')].map(img => img.complete ? Promise.resolve() : new Promise(r => { img.onload = img.onerror = r; }));
+  const bg = new Image(); waits.push(new Promise(r => { bg.onload = bg.onerror = r; bg.src = 'assets/hero_room.webp'; }));
+  const au = $('#bgm'); waits.push(new Promise(r => { if (au.readyState >= 3) r(); else { au.addEventListener('canplaythrough', r, { once:true }); au.addEventListener('error', r, { once:true }); au.load(); } }));
+  let loaded = 0, ready = false; waits.forEach(w => w.then(() => loaded++)); Promise.all(waits).then(() => ready = true);
+  let shown = 0;
+  (function tick(){
+    const t = performance.now() - t0, done = (t >= MIN && ready) || t >= MAX;
+    const target = done ? 1 : Math.min(t / MIN, .12 + loaded / waits.length * .88) * .97;
+    shown += (target - shown) * .08; if (done && shown > .995) shown = 1;
+    const w = (shown * 100).toFixed(1) + '%'; bar.style.width = w; knob.style.left = w; pct.textContent = Math.round(shown * 100) + '%';
+    if (shown < 1) return requestAnimationFrame(tick);
+    $('#introTitle').textContent = 'Món quà đã sẵn sàng!'; pct.hidden = true; go.hidden = false; go.focus({ preventScroll:true });
+  })();
+  go.addEventListener('click', () => {
+    el.classList.add('opening'); document.body.classList.remove('intro-open'); document.body.classList.add('revealing');
+    setTimeout(() => el.remove(), 1600); setTimeout(() => document.body.classList.remove('revealing'), 3200);
+  });
+})();
 
 /* ================== CỔNG SỐ ĐIỆN THOẠI ================== */
 $('#roster').innerHTML = MEMBERS.map(m => `
