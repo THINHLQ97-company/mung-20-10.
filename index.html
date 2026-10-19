@@ -880,9 +880,20 @@ const Music = (function(){
     ensureGraph(); apply(); save();
   });
   vol.addEventListener('input', () => { v = +vol.value; el.volume = v / 100; if (v > 0) on = true; started = true; ensureGraph(); apply(); save(); });
-  // Trình duyệt chỉ cho phát nhạc sau thao tác đầu tiên của người xem
-  const first = e => { if (box.contains(e.target)) return; removeEventListener('pointerdown', first, true); removeEventListener('keydown', first, true); started = true; ensureGraph(); apply(); };
-  addEventListener('pointerdown', first, true); addEventListener('keydown', first, true);
+  // Trình duyệt chỉ cho phát nhạc sau một thao tác "thật" (chạm xong, bấm, gõ phím). Trên điện thoại, lúc ngón tay
+  // vừa chạm (pointerdown) chưa được tính, nên lắng nghe cả pointerup/touchend/click và chỉ gỡ khi nhạc đã phát được.
+  const EVTS = ['pointerup', 'touchend', 'click', 'keydown'];
+  let unlocked = false;
+  const detach = () => { unlocked = true; EVTS.forEach(t => removeEventListener(t, first, true)); };
+  function first(e){
+    if (unlocked || (e && box.contains(e.target))) return;
+    started = true; ensureGraph();
+    if (!on || v === 0){ apply(); detach(); return; }
+    if (mode === 'game'){ apply(); const ok = () => { if (actx && actx.state === 'running') detach(); }; actx?.resume?.().then(ok, () => {}); ok(); return; }
+    el.play().then(() => { detach(); apply(); }, () => {});   // gọi play() ngay trong thao tác; thất bại thì chờ thao tác sau
+    apply();
+  }
+  EVTS.forEach(t => addEventListener(t, first, true));
   (function tick(t){
     if (graph && !box.classList.contains('muted')){ graph.analyser.getByteFrequencyData(graph.data);
       bars.forEach((b, i) => b.style.setProperty('--h', (3 + graph.data[2 + i * 3] / 255 * 13).toFixed(1) + 'px')); }
